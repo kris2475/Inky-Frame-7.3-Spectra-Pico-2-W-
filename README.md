@@ -59,22 +59,6 @@ The Inky Frame 7.3" Spectra uses an 8-colour e-ink palette, which is more limite
 #### 6.1 Adjust Image Brightness and Contrast
 - Increase brightness and contrast before quantisation using an image editor or within `image_prep.py`.
 
-Example using Pillow:
-
-```python
-from PIL import Image, ImageEnhance
-
-img = Image.open("your_image.png").convert("RGB")
-
-# Brighten and increase contrast
-enhancer = ImageEnhance.Brightness(img)
-img = enhancer.enhance(1.3)  # Increase brightness by 30%
-enhancer = ImageEnhance.Contrast(img)
-img = enhancer.enhance(1.2)  # Increase contrast by 20%
-
-img.save("adjusted_image.png")
-```
-
 #### 6.2 Use a Custom Palette Mapping
 - Modify the RGB values in `image_prep.py` to better map the colours of your original image to the 8-colour palette.
 
@@ -82,13 +66,44 @@ img.save("adjusted_image.png")
 - Floyd-Steinberg dithering is used by default. Experiment with different methods or disable dithering (`dither=Image.Dither.NONE`) to find the optimal effect for your image.
 
 #### 6.4 Test and Iterate
-- Due to e-ink refresh times, small adjustments may require multiple iterations.
 - Save intermediate quantised images to preview the colour palette before sending to the display.
 
-### 7. Troubleshooting
+### 7. Colour Optimisation Process for Inky Frame 7.3" Spectra
+
+The objective of this final tuning stage is to maximise the display's limited 8-colour palette, ensuring your vibrant source image is represented accurately and dynamically. A time-saving approach was implemented: after every adjustment to the script, a local PNG preview (`preview_quantized.png`) was generated on the PC, allowing instant visualisation of the colour mapping and dithering before committing to the 15–30 second refresh cycle on the physical display.
+
+#### Iteration 1: `image_prep_enhanced1` – Addressing the "Dark" Image
+
+| Variable | Detail of Adjustment | Rationale |
+|----------|-------------------|-----------|
+| Brightness/Contrast | Aggressive increase (Brightness ×1.5, Contrast ×1.3) | E-ink screens are reflective and inherently darker. Boosting tones forces colours into the brighter range of the palette. |
+| Dithering | Tested with `Image.Dither.ADAPTIVE` | To find a blending algorithm that brightens initial colour representation. |
+
+Result: The image was brighter, but still saturated with Taupe/Grey and Orange.
+
+#### Iteration 2: `image_prep_enhanced2` – Solving Grey Bias
+
+| Variable | Detail of Adjustment | Rationale |
+|----------|-------------------|-----------|
+| Palette | Surgical removal of Taupe/Grey, reducing palette to 7 colours | Eliminates grey dominance, forcing vibrant primaries to represent neutral areas. |
+| Dithering | Disabled (`Image.Dither.NONE`) | To preview raw effect without blending. |
+
+Result: Grey dominance eliminated, but image looked blocky and washed out.
+
+#### Iteration 3: `image_prep_enhanced3` – Achieving Optimal Smoothness
+
+| Variable | Detail of Adjustment | Rationale |
+|----------|-------------------|-----------|
+| Palette | Maintained 7-colour palette | Maximises saturation and avoids neutral dominance. |
+| Dithering | Re-enabled Floyd-Steinberg | Mixes neighbouring pixels to create illusion of intermediate shades, restoring texture and smoothness. |
+| Enhancement | Finalised (Brightness ×1.4, Contrast ×1.2) | Balances visibility and colour integrity post-blending. |
+
+Final Result: The current settings represent the most accurate and vibrant conversion achievable for the Inky Frame 7.3" Spectra, validated using the local PNG preview method.
+
+### 8. Troubleshooting
 Refer to [`Troubleshooting.md`](Troubleshooting.md) for common issues related to Wi-Fi connectivity, server access, or display refresh.
 
-### 8. Notes and Recommendations
+### 9. Notes and Recommendations
 - Ensure the Pico W has sufficient power (use a wall adapter, not a computer USB port).
 - Keep the HTTP server terminal open during image streaming.
 - Follow the recommended folder and repository structure to avoid path issues.
