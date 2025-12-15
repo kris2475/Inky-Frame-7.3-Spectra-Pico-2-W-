@@ -12,8 +12,8 @@ import urequests
 from picographics import PicoGraphics, DISPLAY_INKY_FRAME_SPECTRA_7 
 
 # --- Configuration (Your FINAL details are inserted) ---
-WIFI_SSID = "SKYYRMR7"
-WIFI_PASSWORD = "K2xWvDFZkuCh"
+WIFI_SSID = ""
+WIFI_PASSWORD = ""
 HOST_IP = "192.168.0.3" 
 # CORRECTED FILE NAME: image_data.dat
 IMAGE_URL = f"http://{HOST_IP}:8000/image_data.dat"
