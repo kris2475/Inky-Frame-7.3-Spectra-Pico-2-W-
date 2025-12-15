@@ -111,7 +111,6 @@ Refer to [`Troubleshooting.md`](Troubleshooting.md) for common issues related to
 
 ### References
 - [Pimoroni Inky Frame MicroPython firmware](https://shop.pimoroni.com/products/inky-frame-7-3-spectra)
-- [Original repository by kris2475](https://github.com/kris2475/Inky-Frame-7.3-Spectra-Pico-2-W-)
 
 ### License
 This repository inherits the licence from the original project by kris2475. Refer to the `LICENSE` file for details.
