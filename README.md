@@ -2,17 +2,17 @@
 
 ## Executive Summary
 
-This repository provides a complete end-to-end workflow for streaming images from a PC to the Inky Frame 7.3" Spectra display using a Raspberry Pi Pico 2 W. It includes all necessary steps: image preparation on a PC, serving the image over HTTP, configuring Wi-Fi credentials, and streaming/displaying the image on the Pico. This guide also references additional documents to provide detailed instructions and troubleshooting information.
+This repository provides a complete end-to-end workflow for streaming images from a PC to the Inky Frame 7.3" Spectra display using a Raspberry Pi Pico 2 W. It includes all necessary steps: image preparation on a PC, serving the image over HTTP, configuring Wi-Fi credentials, and streaming/displaying the image on the Pico. Additionally, it provides guidance on optimising colour accuracy for the e-ink display. This guide references supporting documents to provide detailed instructions and troubleshooting information.
 
 ## Introduction
 
-The Inky Frame 7.3" Spectra is an 8-color e-paper display designed for rich, low-power image display. Using the Raspberry Pi Pico 2 W and specialized Pimoroni MicroPython firmware, users can stream images over Wi-Fi from their PC to the Inky Frame. This repository consolidates scripts, configuration, and documentation to simplify this process.
+The Inky Frame 7.3" Spectra is an 8-colour e-ink display designed for rich, low-power image presentation. Using the Raspberry Pi Pico 2 W and specialised Pimoroni MicroPython firmware, users can stream images over Wi-Fi from their PC to the Inky Frame. This repository consolidates scripts, configuration, and documentation to simplify this process.
 
 ### Key Features
-- Converts standard images (JPG, PNG) into 8-color raw format compatible with Inky Frame.
+- Converts standard images (JPG, PNG) into 8-colour raw format compatible with Inky Frame.
 - Serves the image from a PC using a simple HTTP server.
 - Connects the Pico 2 W to Wi-Fi and streams image data pixel-by-pixel.
-- Includes troubleshooting and configuration guidance.
+- Guidance for improving colour matching and display vibrancy.
 - Modular structure with separate scripts for clarity and maintainability.
 
 ## Repository Structure
@@ -50,20 +50,53 @@ Host the raw image on your PC using a simple Python HTTP server. Follow [`HTTP_S
 Create a `secrets.py` file on the Pico W with your Wi-Fi SSID and password. Instructions are provided in [`HTTP_Server_Setup.md`](HTTP_Server_Setup.md).
 
 ### 5. Pico Execution
-Upload `boot.py` and `image_display.py` to the root of your Pico W using Thonny. `boot.py` will automatically run the display script on startup.
+Upload `boot.py` and `image_display.py` to the root of your Pico W using Thonny. `boot.py` will automatically run the display script on start-up.
 
-### 6. Troubleshooting
-For common issues with Wi-Fi connectivity, server access, or display refresh, refer to [`Troubleshooting.md`](Troubleshooting.md).
+### 6. Improving Colour Accuracy
 
-## Notes and Recommendations
+The Inky Frame 7.3" Spectra uses an 8-colour e-ink palette, which is more limited and less vibrant than typical LCD or OLED displays. Images may appear darker or less saturated. To achieve better colour matching:
+
+#### 6.1 Adjust Image Brightness and Contrast
+- Increase brightness and contrast before quantisation using an image editor or within `image_prep.py`.
+
+Example using Pillow:
+
+```python
+from PIL import Image, ImageEnhance
+
+img = Image.open("your_image.png").convert("RGB")
+
+# Brighten and increase contrast
+enhancer = ImageEnhance.Brightness(img)
+img = enhancer.enhance(1.3)  # Increase brightness by 30%
+enhancer = ImageEnhance.Contrast(img)
+img = enhancer.enhance(1.2)  # Increase contrast by 20%
+
+img.save("adjusted_image.png")
+```
+
+#### 6.2 Use a Custom Palette Mapping
+- Modify the RGB values in `image_prep.py` to better map the colours of your original image to the 8-colour palette.
+
+#### 6.3 Dithering Options
+- Floyd-Steinberg dithering is used by default. Experiment with different methods or disable dithering (`dither=Image.Dither.NONE`) to find the optimal effect for your image.
+
+#### 6.4 Test and Iterate
+- Due to e-ink refresh times, small adjustments may require multiple iterations.
+- Save intermediate quantised images to preview the colour palette before sending to the display.
+
+### 7. Troubleshooting
+Refer to [`Troubleshooting.md`](Troubleshooting.md) for common issues related to Wi-Fi connectivity, server access, or display refresh.
+
+### 8. Notes and Recommendations
 - Ensure the Pico W has sufficient power (use a wall adapter, not a computer USB port).
 - Keep the HTTP server terminal open during image streaming.
-- Use the recommended folder and repository structure to avoid path issues.
+- Follow the recommended folder and repository structure to avoid path issues.
 - Keep `secrets.py` private and out of version control.
 
-## References
+### References
 - [Pimoroni Inky Frame MicroPython firmware](https://shop.pimoroni.com/products/inky-frame-7-3-spectra)
 - [Original repository by kris2475](https://github.com/kris2475/Inky-Frame-7.3-Spectra-Pico-2-W-)
 
-## License
-This repository inherits the license from the original project by kris2475. Refer to the `LICENSE` file for 
+### License
+This repository inherits the licence from the original project by kris2475. Refer to the `LICENSE` file for details.
