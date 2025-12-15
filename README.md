@@ -1,1 +1,0 @@
-# Inky-Frame-7.3-Spectra-Pico-2-W-
